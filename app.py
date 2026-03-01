@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import datetime
 from services.certificate_service import process_certificate
 from flask_wtf import CSRFProtect
+from werkzeug.security import generate_password_hash, check_password_hash
 
 try:
     from dotenv import load_dotenv
@@ -172,11 +173,13 @@ def privacy_policy():
 def student():
     if request.method == "POST":
         student_id = request.form.get("sname")
-        password = request.form.get("password")
+        password = generate_password_hash(request.form.get("password"))
+        
 
         connection = sqlite3.connect(DB_PATH)
         cursor = connection.cursor()
-        cursor.execute("SELECT * FROM student WHERE student_id = ? AND password = ?", (student_id, password))
+        from werkzeug.security import generate_password_hash, check_password_hash
+       
         student_data = cursor.fetchone()
         connection.close()
 
